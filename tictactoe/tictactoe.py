@@ -206,21 +206,21 @@ def maxiScore(board):
         return utility(board), None	
 
     #Si no termino voy a extremar
-    v = float('-inf')
-    move = None
+    vfinal = float('-inf')
+    movim = None
 
     #Miro las acciones permitidas
     for action in actions(board):
 
     	#Minimizo la accion de haber movido
-        aux, act = miniScore(result(board, action))
-        if aux > v:
-            v = aux
-            move = action
-            if v == 1: #Que es lo que quiero que suceda para maximizar score de X
-                return v, move
+        ext, vfinal = miniScore(result(board, action))
+        if ext > vfinal:
+            vfinal = ext
+            movim = action
+            if vfinal == 1: #Que es lo que quiero que suceda para maximizar score de X
+                return vfinal, movim
 
-    return v, move
+    return vfinal, movim
 
 def miniScore(board):
 
@@ -228,38 +228,19 @@ def miniScore(board):
         return utility(board), None	
 
     #Si no termino voy a extremar
-    v = float('inf')
-    move = None
+    vfinal = float('inf')
+    movim = None
 
     #Miro las acciones permitidas
     for action in actions(board):
 
     	#Maximizo la accion de haber movido
-        aux, act = maxiScore(result(board, action))
+        ext, act = maxiScore(result(board, action))
 
-        if aux < v:
-            v = aux
-            move = action
-            if v == -11: #Que es lo que quiero que suceda para minimizar score de O
-                return v, move
+        if ext < vfinal:
+            vfinal = ext
+            movim = action
+            if vfinal == -1: #Que es lo que quiero que suceda para minimizar score de O
+                return vfinal, movim
 
-    return v, move
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    return vfinal, movim
