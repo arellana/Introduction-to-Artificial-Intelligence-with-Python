@@ -3,6 +3,7 @@ Tic Tac Toe Player
 """
 
 import math
+import copy
 
 X = "X"
 O = "O"
@@ -25,11 +26,11 @@ def player(board):
     #Conteo de casilleros ocupados 
     cantX = 0
     cantO = 0
-    for i in range(len(board[:,0])):
-        for j in range(len(board[0,:])):
-            if board[i,j] == X:
+    for i in range(len(board[:][0])):
+        for j in range(len(board[0][:])):
+            if board[i][j] == X:
                 cantX += 1 
-            elif board[i,j] == O:
+            elif board[i][j] == O:
                 cantO += 1 
             else:
                 pass
@@ -56,9 +57,9 @@ def actions(board):
     accion = set()
 
     #relleno en conjunto con los vacios
-    for i in range(len(board[:,0])):
-        for j in range(len(board[0,:])):
-            if board[i,j] == EMPTY:
+    for i in range(len(board[:][0])):
+        for j in range(len(board[0][:])):
+            if board[i][j] == EMPTY:
                 accion.add((i,j)) 
 
     return accion
@@ -72,14 +73,16 @@ def result(board, action):
     """
     
     #Creo una copia del estado original y lo lleno de la accion que se realizo (poner una X o O)
-    nuenoTab = board
+    nuevoTab = copy.deepcopy(board)
 
     if action in actions(board):
         #board me va a enviar el lugar donde pulsaron, veo de quien es el turno y eso lo relleno en el nuevo lugar
-        nuevoTab[action[0],action[1]] = player(board)
+        nuevoTab[action[0]][action[1]] = player(board)
     else:
         print('Casillero no disponible')
 
+    #result = copy.deepcopy(board)
+    #nuevoTab[action[0]][action[1]] = player(board)
     return nuevoTab
 
     raise NotImplementedError
@@ -132,14 +135,14 @@ def winner(board):
 
 
     ganador = None
-    if len(win) = 1:
+    if len(win) == 1:
         for w in range(len(win)): 
             if win[w] == X:
                 ganador = X
             elif win[w] == O:
                 ganador = O
     elif len(win) > 1:
-        print('Error: Multiples ganadores')
+#        print('Error: Multiples ganadores')
 
 
     return ganador  
@@ -182,4 +185,81 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    #Si no termino la partida, analizo el movimiento
+    if terminal(board):
+    	return None
+
+    else: #Si le toca a X que piense
+        if player(board) == X:
+        	value, jugada = maxiScore(board)
+        	return jugada
+        elif player(board) == O:
+        	value, jugada = miniScore(board)
+        	return jugada
+
     raise NotImplementedError
+
+
+def maxiScore(board):
+
+    if terminal(board): #Si ya termino el juego, listo, devolve el score
+        return utility(board), None	
+
+    #Si no termino voy a extremar
+    v = float('-inf')
+    move = None
+
+    #Miro las acciones permitidas
+    for action in actions(board):
+
+    	#Minimizo la accion de haber movido
+        aux, act = miniScore(result(board, action))
+        if aux > v:
+            v = aux
+            move = action
+            if v == 1: #Que es lo que quiero que suceda para maximizar score de X
+                return v, move
+
+    return v, move
+
+def miniScore(board):
+
+    if terminal(board): #Si ya termino el juego, listo, devolve el score
+        return utility(board), None	
+
+    #Si no termino voy a extremar
+    v = float('inf')
+    move = None
+
+    #Miro las acciones permitidas
+    for action in actions(board):
+
+    	#Maximizo la accion de haber movido
+        aux, act = maxiScore(result(board, action))
+
+        if aux < v:
+            v = aux
+            move = action
+            if v == -11: #Que es lo que quiero que suceda para minimizar score de O
+                return v, move
+
+    return v, move
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
